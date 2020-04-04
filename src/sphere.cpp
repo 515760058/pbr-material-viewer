@@ -11,6 +11,7 @@ namespace {
 	}
 }
 
+//生成球体的顶点属性和索引数据，并建立Mesh
 Sphere::Sphere()
 {
 	std::vector<Vertex> vertices;

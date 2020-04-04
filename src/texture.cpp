@@ -32,6 +32,7 @@ void Texture::bind(GLenum textureUnit) const
 	glBindTexture(GL_TEXTURE_2D, mID);
 }
 
+//加载图像文件，并申请GPU内存上传数据
 void Texture::loadTexture(const GLchar* texturePath, bool srgb)
 {
 	glBindTexture(GL_TEXTURE_2D, mID);

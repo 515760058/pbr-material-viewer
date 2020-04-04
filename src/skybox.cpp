@@ -8,6 +8,7 @@ namespace {
 	}
 }
 
+//生成天空盒的顶点属性和索引数据，并建立Mesh
 Skybox::Skybox()
 {
 	std::vector<Vertex> vertices;

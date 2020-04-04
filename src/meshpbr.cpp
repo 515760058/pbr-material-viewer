@@ -10,6 +10,7 @@ MeshPBR::~MeshPBR()
 
 }
 
+//绑定pbr预积分纹理到要对应的纹理单元。 并使用shader.setInt设置shader中sampler对应的纹理单元
 void MeshPBR::draw(const Shader& shader) const
 {
 	shader.use();
@@ -17,6 +18,7 @@ void MeshPBR::draw(const Shader& shader) const
 	mMaterial.use(shader, textureUnit);
 
 	if (mBrdfLUT != nullptr) {
+		//预积分纹理 ==> 纹理单元x <== shader中的sampler
 		shader.setInt("brdfLUT", textureUnit);
 		mBrdfLUT->bind(GL_TEXTURE0 + textureUnit);
 		textureUnit++;

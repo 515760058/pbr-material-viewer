@@ -3,6 +3,7 @@
 
 #include "mesh.h"
 
+//四边形（顶点属性和索引）
 class Quad : public Mesh
 {
 public:

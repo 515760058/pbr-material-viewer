@@ -3,6 +3,7 @@
 
 #include "meshpbr.h"
 
+//渲染的球体模型，继承自MeshPBR(含有Mesh和pbr材质参数)
 class Sphere : public MeshPBR
 {
 public:

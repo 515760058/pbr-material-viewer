@@ -17,6 +17,7 @@ namespace {
 	const int brdfLUTRes = 512;
 
 	glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
+	//立方体贴图每个面使用的view矩阵
 	glm::mat4 captureViews[] =
 	{
 		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
@@ -40,6 +41,8 @@ CubeMapGenerator::~CubeMapGenerator()
 
 std::shared_ptr<CubeMap> CubeMapGenerator::generateEnvironmentMap(const GLchar* imagePath)
 {
+	//立方体纹理，会把矩形环境贴图抓化到该立方体纹理上。
+	//注意这只是一个(立方体)纹理，还需要使用一个模型(skybox模型)才有Draw功能
 	std::shared_ptr<CubeMap> environmentMap = std::make_shared<CubeMap>();
 
 	// Load equirectangular hdr image
@@ -66,29 +69,30 @@ std::shared_ptr<CubeMap> CubeMapGenerator::generateEnvironmentMap(const GLchar* 
 
 		glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 		glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, envRes, envRes);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, envRes, envRes);//深度附件的GPU内存
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);//深度附件绑定到fbo
 
+		//为矩形环境贴图申请GPU内存，并上传数据
 		unsigned int hdrTextureID;
 		glGenTextures(1, &hdrTextureID);
 		glBindTexture(GL_TEXTURE_2D, hdrTextureID);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
-
+		//设置纹理的过滤模式
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		// Generate environment cubemap
+		// Generate environment cubemap  立方体纹理使用纹理单元0
 		environmentMap->bind(GL_TEXTURE0);
-
+		//为立方体纹理的每个面申请内存
 		for (unsigned int i = 0; i < 6; ++i)
 		{
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, envRes, envRes, 0, GL_RGB, GL_FLOAT, nullptr);
 		}
-
+		//天空盒模型，使用该立方体纹理。（把矩形环境贴图抓化到天空盒的立方体纹理上）
 		mSkybox->setEnvironmentMap(environmentMap);
-
+		//立方体纹理的过滤模式
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);

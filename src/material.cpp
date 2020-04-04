@@ -3,6 +3,8 @@
 Material::Material()
 {}
 
+//pbr纹理 ==> 纹理单元x <== shader中的sampler
+//绑定pbr材质纹理到要对应的纹理单元。 并使用shader.setInt设置shader中sampler对应的纹理单元
 void Material::use(const Shader& shader, unsigned int &textureUnit) const
 {
 	shader.setVec2("textureScale", mTextureScale);

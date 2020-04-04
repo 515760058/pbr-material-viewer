@@ -6,6 +6,7 @@ namespace {
 	}
 }
 
+//生成四边形的顶点属性和索引数据，并建立Mesh
 Quad::Quad()
 {
 	std::vector<Vertex> vertices;
