@@ -47,6 +47,10 @@ You can then open the generated project files in your IDE or build the project d
 cmake --build . --config Release
 ```
 
+使用VS2019打开此解决方案(.sln)然后编译时，出现很多glfw的错误。这是因为该项目提供的glfw3.lib版本和自己的编译环境(OS和IDE)不兼容，需要从网上下载适用于自己系统(win10,64位)和IDE(VS2019)的glfw文件，就可以编译通过。
+
+运行这个demo后，把自己的环境贴图(.hdr)和pbr材质贴图(albedo,normal,roughnes和displacement等文件)拖动到相应的位置，就可以看到效果了。
+
 In order to keep things simple, building this project will generate a standalone executable. Shaders and other resources are embedded in the program during compilation.
 
 ## Libraries
